@@ -45,6 +45,7 @@ struct EulerTourLCA {
         for (int v : G[u]) {
             if (v == p) continue;
             dfs(G, v, u, d + 1);
+			sub_size[u] += sub_size[v];
             tour.push_back(u);
             depths.push_back(d);
         }

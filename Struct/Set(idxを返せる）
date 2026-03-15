@@ -1,0 +1,49 @@
+int ASop(int a, int b) { return a + b; }
+int ASe() { return 0; }
+
+struct ACLSet {
+    atcoder::segtree<int, ASop, ASe> seg;
+    int max_val;
+
+    // 0 から n-1 までの値を扱えるように初期化
+    ACLSet(int n) : seg(n), max_val(n) {}
+
+    // 要素 x を追加: O(log N)
+    void insert(int x, int count = 1) {
+        if (x < 0 || x >= max_val) return;
+        seg.set(x, seg.get(x) + count);
+    }
+
+    // 要素 x を削除: O(log N)
+    void erase(int x, int count = 1) {
+        if (x < 0 || x >= max_val) return;
+        int current = seg.get(x);
+        seg.set(x, std::max(0, current - count));
+    }
+
+    // 要素 x が含まれているか: O(1) ※ACLのgetはO(1)
+    bool contains(int x) const {
+        if (x < 0 || x >= max_val) return false;
+        return seg.get(x) > 0;
+    }
+
+    // k 番目に小さい値を返す (1-indexed): O(log N)
+    int kth_element(int k) {
+        if (k <= 0 || k > seg.all_prod()) return -1; // 存在しない場合
+
+        // max_right を使ったセグ木上の二分探索
+        // f(v) が true である最大の右端を返す
+        auto f = [&](int v) { return v < k; };
+        return seg.max_right(0, f);
+    }
+
+    // 値 x が小さい方から何番目か (0-indexed): O(log N)
+    int rank(int x) {
+        if (x < 0) return 0;
+        if (x >= max_val) return seg.all_prod();
+        return seg.prod(0, x);
+    }
+
+    // 全要素数: O(1)
+    int size() { return seg.all_prod(); }
+};

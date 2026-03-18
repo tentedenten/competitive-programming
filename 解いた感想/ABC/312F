@@ -1,0 +1,5 @@
+	rep(j,c[i]) if(!b.empty()){
+			pu(b.back());
+			b.pop_back();
+		}
+    これだとO(c[i])かかるだからwhile文でbに合わせなければならない
